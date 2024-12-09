@@ -101,7 +101,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     console.log("Sending query to Groq...");
     const completion = await groq.chat.completions.create({
-      messages,
+      messages: [
+        { role: "user", content: "Hello" },
+        { role: "assistant", content: "Hi! How can I help you?" },
+        { role: "function", content: "Processed result", name: "processData" },
+      ],
       model: "llama3-8b-8192",
       max_tokens: 4000,
       temperature: 0.6,
