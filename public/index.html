@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM Chatbot</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+             background-color: #f9f9f900;         /*  make this background color opacity to 0 fixed */
+        }
+        #chat-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 350px;
+            height: 550px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            background-color: #ffffff00;
+            transform: translateY(100%);
+            opacity: 0;
+            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        #chat-container.open {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        #chat-header-container {
+            background: linear-gradient(135deg, #5a99f7, #67d9f7);
+            color: white;
+            padding: 20px;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+        }
+        #chat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        #chat-header button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        #tabs {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+        }
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 20px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .tab.active {
+            background-color: rgba(255, 255, 255, 0.3);
+            color: white;
+        }
+        #tab-indicator {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 4px;
+            width: 50%;
+            background-color: white;
+            transition: left 0.3s;
+        }
+        #chatbox {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+            border-bottom: 1px solid #e1e1e1;
+            display: flex;
+            flex-direction: column;
+            background-color: #f9f9f9;
+        }
+        #chat-input-section {
+            display: flex;
+            padding: 15px;
+            border-top: 1px solid #e1e1e1;
+            background-color: #f1f1f1;
+            align-items: center;
+        }
+        #userInput {
+            flex: 1;
+            padding: 12px 20px;
+            border-radius: 30px;
+            border: 1px solid #ccc;
+            outline: none;
+            margin-right: 10px;
+            font-size: 14px;
+        }
+        #sendButton {
+            padding: 10px 20px;
+            background-color: #5a99f7;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        #sendButton:hover {
+            background-color: #4893e6;
+        }
+        .message {
+            margin: 10px 0;
+            padding: 12px 20px;
+            border-radius: 20px;
+            max-width: 80%;
+            word-wrap: break-word;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .user {
+            background-color: #d1e7dd;
+            margin-left: auto;
+        }
+        .bot {
+            background-color: #f8d7da;
+            margin-right: auto;
+        }
+        #chat-icon {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background-color: #5a99f7;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            font-size: 24px;
+            transition: transform 0.3s ease-in-out;
+        }
+        #chat-icon:hover {
+            transform: scale(1.1);
+        }
+        .quick-prompts {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            flex-wrap: wrap;
+        }
+        .quick-prompts button {
+            background: linear-gradient(45deg, #ff7e5f, #feb47b);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 13px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: transform 0.2s ease, background 0.2s ease;
+            margin: 5px;
+        }
+        .quick-prompts button:hover {
+            background: linear-gradient(45deg, #e35d5b, #f78a5f);
+            transform: scale(1.05);
+        }
+        #contact-us {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        .contact-buttons {
+            margin-top: 20px;
+        }
+        .contact-buttons a {
+            display: block;
+            margin-bottom: 15px;
+            padding: 12px 25px;
+            text-decoration: none;
+            background-color: #5a99f7;
+            color: white;
+            border-radius: 30px;
+            text-align: center;
+            transition: background-color 0.3s ease;
+        }
+        .contact-buttons a:hover {
+            background-color: #4893e6;
+        }
+        #branding {
+            text-align: center;
+            padding: 10px;
+            background-color: #f1f1f1;
+            color: #333;
+            font-size: 12px;
+            margin-top: auto;
+        }
+        #branding-box {
+            background-color: #f9f9f9;
+            color: #333;
+            padding: 10px;
+            border-radius: 15px;
+            text-align: center;
+            margin-top: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+
+<div id="chat-icon">💬</div>
+
+<div id="chat-container">
+    <div id="chat-header-container">
+        <div id="chat-header">
+            <div id="tabs">
+                <div id="chat-tab" class="tab active" onclick="switchTab('chat')">Chat</div>
+                <div id="contact-tab" class="tab" onclick="switchTab('contact')">Contact Us</div>
+            </div>
+            <button id="closeChat">&times;</button>
+        </div>
+        <div id="tab-indicator"></div>
+    </div>
+
+    <div id="chatbox">
+        <div class="quick-prompts">
+            <button onclick="sendQuickPrompt('Favorite simulation project?')">Favorite Project</button>
+            <button onclick="sendQuickPrompt('Accretion theory dead?')">Accretion Theory</button>
+            <button onclick="sendQuickPrompt('Astrophysics or algorithm?')">Astrophysics/Algorithm</button>
+        </div>        
+        <div id="messages"></div>
+    </div>
+
+    <div id="contact-us">
+        <div class="contact-buttons">
+            <a href="https://www.linkedin.com/in/sunnydhakane" target="_blank">LinkedIn</a>
+            <a href="mailto:sunny.dhakane@example.com">Email</a>
+            <a href="tel:+1234567890">Phone</a>
+        </div>
+    </div>
+
+    <div id="chat-input-section">
+        <input type="text" id="userInput" placeholder="Type your message...">
+        <button id="sendButton">Send</button>
+    </div>
+
+    <div id="branding">
+        <div id="branding-box">
+            © 2024 Sunny Dhakane
+        </div>
+    </div>
+</div>
+
+<script>
+    const chatIcon = document.getElementById('chat-icon');
+    const chatContainer = document.getElementById('chat-container');
+    const closeChatButton = document.getElementById('closeChat');
+    const messagesDiv = document.getElementById('messages');
+    const userInput = document.getElementById('userInput');
+    const sendButton = document.getElementById('sendButton');
+    const chatTab = document.getElementById('chat-tab');
+    const contactTab = document.getElementById('contact-tab');
+    const tabIndicator = document.getElementById('tab-indicator');
+    const chatbox = document.getElementById('chatbox');
+    const contactUs = document.getElementById('contact-us');
+    const chatInputSection = document.getElementById('chat-input-section');
+
+    chatIcon.addEventListener('click', () => {
+        chatContainer.classList.add('open');
+        chatIcon.style.display = 'none';
+    });
+
+    closeChatButton.addEventListener('click', () => {
+        chatContainer.classList.remove('open');
+        chatIcon.style.display = 'flex';
+    });
+
+    sendButton.addEventListener('click', async () => {
+    const userMessage = userInput.value.trim();
+    const urlParams = new URLSearchParams(window.location.search);
+    const tenantId = urlParams.get("tenantId"); // Get tenant ID dynamically
+    const sessionId = localStorage.getItem("sessionId"); // Session continuity
+
+    if (!tenantId) {
+        addMessage("Error: Tenant ID is missing. Please reload the chatbot.", 'bot');
+        return;
+    }
+
+    if (userMessage) {
+        addMessage(userMessage, 'user');
+        userInput.value = ''; // Clear input field
+
+        try {
+            const response = await fetch('http://localhost:3000/api/conversation', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ tenantId, sessionId, message: userMessage }),
+            });
+
+            const data = await response.json();
+            if (data.chatResponse) {
+                addMessage(data.chatResponse, 'bot'); // Display bot's response
+                if (data.sessionId) {
+                    localStorage.setItem("sessionId", data.sessionId); // Save session ID
+                }
+            } else {
+                addMessage('Sorry, no response available.', 'bot');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            addMessage('Error communicating with the server.', 'bot');
+        }
+    }
+});
+    userInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            sendButton.click();
+        }
+    });
+
+    function addMessage(message, sender) {
+    const messageDiv = document.createElement('div');
+    messageDiv.classList.add('message', sender);
+    messageDiv.innerText = message; // Add message content
+    messagesDiv.appendChild(messageDiv); // Append to chatbox
+    messagesDiv.scrollTop = messagesDiv.scrollHeight; // Scroll to latest
+}
+
+
+    function sendQuickPrompt(prompt) {
+        userInput.value = prompt;
+        sendButton.click();
+    }
+
+    function switchTab(tab) {
+        if (tab === 'chat') {
+            chatTab.classList.add('active');
+            contactTab.classList.remove('active');
+            tabIndicator.style.left = '0';
+            chatbox.style.display = 'flex';
+            contactUs.style.display = 'none';
+            chatInputSection.style.display = 'flex';
+        } else if (tab === 'contact') {
+            contactTab.classList.add('active');
+            chatTab.classList.remove('active');
+            tabIndicator.style.left = '50%';
+            chatbox.style.display = 'none';
+            contactUs.style.display = 'flex';
+            chatInputSection.style.display = 'none';
+        }
+    }
+</script>
+
+</body>
+</html>
