@@ -42,7 +42,7 @@ export default function Home() {
             console.log("Uploading document with Tenant ID:", tenantId);
 
             const response = await axios.post(
-                "/api/upload-document",
+                `${baseUrl}/api/upload-document`,
                 formData,
                 {
                     headers: {
