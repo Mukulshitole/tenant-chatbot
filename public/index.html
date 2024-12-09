@@ -290,6 +290,7 @@
     const urlParams = new URLSearchParams(window.location.search);
     const tenantId = urlParams.get("tenantId"); // Get tenant ID dynamically
     const sessionId = localStorage.getItem("sessionId"); // Session continuity
+    const baseUrl = window.location.origin;
 
     if (!tenantId) {
         addMessage("Error: Tenant ID is missing. Please reload the chatbot.", 'bot');
@@ -301,7 +302,7 @@
         userInput.value = ''; // Clear input field
 
         try {
-            const response = await fetch('http://localhost:3000/api/conversation', {
+            const response = await fetch(`${baseUrl}/api/conversation`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ tenantId, sessionId, message: userMessage }),

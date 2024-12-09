@@ -1,15 +1,20 @@
 "use client";
 
 import axios from "axios";
-import { ChangeEvent, FormEvent, useState } from "react";
-
-
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 
 export default function Home() {
     const [tenantId, setTenantId] = useState<string>("");
     const [file, setFile] = useState<File | null>(null);
     const [uploadStatus, setUploadStatus] = useState<string | null>(null);
     const [chatbotVisible, setChatbotVisible] = useState<boolean>(false);
+    const [baseUrl, setBaseUrl] = useState<string>("");
+
+    useEffect(() => {
+        // Dynamically determine the base URL
+        const hostUrl = process.env.NEXT_PUBLIC_HOST_URL || window.location.origin;
+        setBaseUrl(hostUrl);
+    }, []);
 
     const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
@@ -101,7 +106,7 @@ export default function Home() {
             {chatbotVisible && tenantId && (
                 <iframe
                     id="chatbot-iframe"
-                    src={`http://localhost:3000/index.html?tenantId=${tenantId}`}
+                    src={`${baseUrl}/index.html?tenantId=${tenantId}`}
                     frameBorder="0"
                     style={{
                         position: 'fixed',
@@ -121,59 +126,45 @@ export default function Home() {
                     <h2 className="text-xl font-bold mb-4">Chatbot Embed Code</h2>
                     <pre className="bg-gray-900 p-6 rounded shadow-lg overflow-x-auto text-white">
                         <code>
-                            {`<!--########################################################
-######################CHATBOT EMBEDDDDD######################################
-############################################################# -->
-<style>
+                            {`<style>
 /* Styling to position the iframe as an overlay */
 #chatbot-iframe {
-  position: fixed;  /* Ensures it's positioned relative to the viewport */
-  bottom: 20px;     /* Distance from the bottom */
-  right: 20px;      /* Distance from the right */
-  width: 400px;     /* Set the width of the iframe */
-  height: 600px;    /* Set the height of the iframe */
-  border: none;     /* Remove border around the iframe */
-  z-index: 1000;    /* High z-index to overlay on top of other elements */
-  /* box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2); Optional shadow for aesthetics */
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 400px;
+  height: 600px;
+  border: none;
+  z-index: 1000;
 }
 </style>
 <iframe 
   id="chatbot-iframe" 
-  src="http://localhost:3000/index.html?tenantId=${tenantId}" 
+  src="${baseUrl}/index.html?tenantId=${tenantId}" 
   frameborder="0">
-</iframe>
-<!--########################################################
-######################CHATBOT EMBEDDDDD######################################
-############################################################# -->`}
+</iframe>`}
                         </code>
                     </pre>
                     <button
                         onClick={() => {
                             navigator.clipboard.writeText(
-                                `<!--########################################################
-######################CHATBOT EMBEDDDDD######################################
-############################################################# -->
-<style>
+                                `<style>
 /* Styling to position the iframe as an overlay */
 #chatbot-iframe {
-  position: fixed;  /* Ensures it's positioned relative to the viewport */
-  bottom: 20px;     /* Distance from the bottom */
-  right: 20px;      /* Distance from the right */
-  width: 400px;     /* Set the width of the iframe */
-  height: 600px;    /* Set the height of the iframe */
-  border: none;     /* Remove border around the iframe */
-  z-index: 1000;    /* High z-index to overlay on top of other elements */
-  /* box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2); Optional shadow for aesthetics */
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 400px;
+  height: 600px;
+  border: none;
+  z-index: 1000;
 }
 </style>
 <iframe 
   id="chatbot-iframe" 
-  src="http://localhost:3000/index.html?tenantId=${tenantId}" 
+  src="${baseUrl}/index.html?tenantId=${tenantId}" 
   frameborder="0">
-</iframe>
-<!--########################################################
-######################CHATBOT EMBEDDDDD######################################
-############################################################# -->`
+</iframe>`
                             );
                             alert("Code copied to clipboard!");
                         }}
