@@ -118,11 +118,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
 
         // Clean up the file
-        fs.unlinkSync(documentPath);
+        try {
+            await fs.promises.unlink(documentPath);
+        } catch (err) {
+            console.error("Error deleting file:", err);
+        }
 
         res.status(200).json({ message: "Document uploaded and processed successfully!" });
     } catch (error: any) {
         console.error("Error uploading document:", error);
+
+        // Ensure file cleanup in case of error
+        try {
+            await fs.promises.unlink(documentPath);
+        } catch (err) {
+            console.error("Error deleting file after failure:", err);
+        }
+
         res.status(500).json({ message: error.message });
     }
 }
