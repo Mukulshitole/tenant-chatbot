@@ -95,15 +95,28 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const groq = new Groq({ apiKey: getRandomAPIKey(GROQ_KEYS) });
 
     const messages = [
-      { role: "system", content: "You are a helpful assistant. Answer in short and relevant terms to the user query." },
-      { role: "user", content: `User query: ${message}, context: ${context}` },
+      {
+        role: "system",
+        content: "You are DuneFox, a professional and knowledgeable assistant. Your role is to assist users by providing concise, accurate, and contextually relevant answers to their queries. Maintain a professional and friendly tone."
+      },
+      {
+        role: "user",
+        content: `Hi, I am DuneFox. I am here to assist you with your queries. User query: ${message}, context: ${context}`
+      }
     ];
 
     console.log("Sending query to Groq...");
     const completion = await groq.chat.completions.create({
       messages: [
-        { role: "system", content: "You are a helpful assistant. Answer in short and relevant terms to the user query." },
-      { role: "user", content: `User query: ${message}, context: ${context}` },
+        {
+          role: "system",
+          content: "You are DuneFox, a professional and knowledgeable assistant. Your role is to assist users by providing concise, accurate, and contextually relevant answers to their queries. Maintain a professional and friendly tone."
+        },
+        {
+          role: "user",
+          content: `Hi, I am DuneFox. I am here to assist you with your queries. User query: ${message}, context: ${context}`
+        }
+        
       ],
       model: "llama3-8b-8192",
       max_tokens: 4000,
