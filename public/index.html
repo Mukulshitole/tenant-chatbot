@@ -287,18 +287,18 @@
 
     sendButton.addEventListener('click', async () => {
     const userMessage = userInput.value.trim();
-    const urlParams = new URLSearchParams(window.location.search);
-    const tenantId = urlParams.get("tenantId"); // Get tenant ID dynamically
+    const tenantId = window.location.hostname.split('.')[0]; // Extract tenant ID from subdomain
     const sessionId = localStorage.getItem("sessionId"); // Session continuity
     const baseUrl = window.location.origin;
 
-    if (!tenantId) {
+    // Check if tenantId exists
+    if (!tenantId || tenantId === 'www' || tenantId === 'localhost') {
         addMessage("Error: Tenant ID is missing. Please reload the chatbot.", 'bot');
         return;
     }
 
     if (userMessage) {
-        addMessage(userMessage, 'user');
+        addMessage(userMessage, 'user'); // Add user message to the UI
         userInput.value = ''; // Clear input field
 
         try {
@@ -323,11 +323,13 @@
         }
     }
 });
-    userInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            sendButton.click();
-        }
-    });
+
+// Trigger send button click on 'Enter' keypress
+userInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        sendButton.click();
+    }
+});
 
     function addMessage(message, sender) {
     const messageDiv = document.createElement('div');

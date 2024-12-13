@@ -114,7 +114,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         },
         {
           role: "user",
-          content: `Hi, I am DuneFox. I am here to assist you with your queries. User query: ${message}, context: ${context}`
+          content: `User query: ${message}, context: ${context}`
         }
         
       ],

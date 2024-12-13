@@ -140,7 +140,7 @@ export default function Home() {
 </style>
 <iframe 
   id="chatbot-iframe" 
-  src="${baseUrl}/index.html?tenantId=${tenantId}" 
+  src="http://${tenantId}.${window.location.host}/index.html" 
   frameborder="0">
 </iframe>`}
                         </code>
@@ -162,7 +162,7 @@ export default function Home() {
 </style>
 <iframe 
   id="chatbot-iframe" 
-  src="${baseUrl}/index.html?tenantId=${tenantId}" 
+  src="http://${tenantId}.${window.location.host}/index.html" 
   frameborder="0">
 </iframe>`
                             );
