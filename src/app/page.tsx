@@ -106,7 +106,7 @@ export default function Home() {
             {chatbotVisible && tenantId && (
                 <iframe
                     id="chatbot-iframe"
-                    src={`${baseUrl}/index.html?tenantId=${tenantId}`}
+                    src={`http://${tenantId}.${window.location.host}/index.html`}
                     frameBorder="0"
                     style={{
                         position: 'fixed',
@@ -162,7 +162,7 @@ export default function Home() {
 </style>
 <iframe 
   id="chatbot-iframe" 
-  src="http://${tenantId}.${window.location.host}/index.html" 
+  src="https://${tenantId}.${window.location.host}/index.html" 
   frameborder="0">
 </iframe>`
                             );

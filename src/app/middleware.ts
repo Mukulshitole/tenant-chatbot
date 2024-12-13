@@ -11,7 +11,7 @@ export default function middleware(req: NextRequest) {
   const subdomain = hostname.split(".")[0];
 
   // Handle requests without subdomains or for the main app
-  if (subdomain === "www" || subdomain === "" || hostname === "localhost:3000") {
+  if (subdomain === "www" || subdomain === "" || hostname === "localhost:3000" ) {
     return NextResponse.next();
   }
 
